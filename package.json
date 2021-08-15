@@ -1,0 +1,27 @@
+{
+  "name": "axiospackage",
+  "version": "1.0.0",
+  "description": "axios",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com.cnpmjs.org/erqiu-sj/axiosPackage.git"
+  },
+  "keywords": [
+    "axios",
+    "http",
+    "react",
+    "vue",
+    "decorator",
+    "javascript",
+    "es6"
+  ],
+  "author": "hooks_28",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^0.21.1"
+  }
+}
