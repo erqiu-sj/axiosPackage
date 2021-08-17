@@ -2,21 +2,21 @@ import axios, { AxiosInstance, AxiosResponse } from "axios";
 import { DiyConfiguration } from "../types/moreOptions";
 import { AxiosCanceler } from "./axiosCanneler";
 
-export class AxiosBase<Err> {
+export class AxiosBase {
   private axiosInstance: AxiosInstance;
-  private readonly axiosOptions: DiyConfiguration<Err>;
+  private readonly axiosOptions: DiyConfiguration;
 
-  constructor(option: DiyConfiguration<Err>) {
+  constructor(option: DiyConfiguration) {
     this.axiosOptions = option;
     this.axiosInstance = axios.create(this.axiosOptions);
     this.setupInterceptors();
   }
 
-  private createAxios(config?: DiyConfiguration<Err>): void {
+  private createAxios(config?: DiyConfiguration): void {
     this.axiosInstance = axios.create(config);
   }
 
-  protected configureAxios(config?: DiyConfiguration<Err>): void {
+  protected configureAxios(config?: DiyConfiguration): void {
     if (!this.axiosInstance) {
       return;
     }
@@ -36,19 +36,17 @@ export class AxiosBase<Err> {
     const errorStatusCodeProcessing =
       this.axiosOptions?.errorStatusCodeProcessing;
     // success handler before request
-    this.axiosInstance.interceptors.request.use(
-      (config: DiyConfiguration<Err>) => {
-        axiosCanceler.addPending(config);
-        if (
-          tranform?.requestInterceptors &&
-          typeof tranform?.requestInterceptors === "function"
-        ) {
-          config = tranform?.requestInterceptors(this.axiosOptions);
-        }
-        return config;
-      },
-      undefined
-    );
+    this.axiosInstance.interceptors.request.use((config: DiyConfiguration) => {
+      axiosCanceler.addPending(config);
+      if (
+        tranform?.requestInterceptors &&
+        typeof tranform?.requestInterceptors === "function"
+      ) {
+        config = tranform?.requestInterceptors(this.axiosOptions);
+      }
+
+      return config;
+    }, undefined);
     // error handler before request
     tranform?.requestInterceptorsCatch &&
       typeof tranform.requestInterceptorsCatch === "function" &&
@@ -65,6 +63,13 @@ export class AxiosBase<Err> {
       ) {
         res = tranform?.responseInterceptors(res);
       }
+
+      const getCurrentCb = errorStatusCodeProcessing?.get(
+        res.data?.code || res.data?.status || res.status
+      );
+      if (typeof getCurrentCb?.fn === "function") getCurrentCb.fn(res);
+      else if (typeof getCurrentCb?.defaultFn === "function")
+        getCurrentCb.defaultFn(res);
       return res;
     }, undefined);
 
@@ -73,12 +78,6 @@ export class AxiosBase<Err> {
       typeof tranform.responseInterceptorsCatch === "function" &&
       this.axiosInstance.interceptors.response.use(undefined, (err: any) => {
         tranform?.responseInterceptorsCatch?.(err);
-        const getCurrentCb = errorStatusCodeProcessing?.get(
-          err?.response?.status || err?.response?.code
-        );
-        if (typeof getCurrentCb?.fn === "function") getCurrentCb.fn(err);
-        else if (typeof getCurrentCb?.defaultFn === "function")
-          getCurrentCb.defaultFn(err);
       });
   }
 }

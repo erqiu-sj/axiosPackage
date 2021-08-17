@@ -1,10 +1,8 @@
+import { AxiosResponse } from "axios";
 // 状态码处理函数
-interface statusCodeProcessingTypes<T> {
-  fn?: (err: T) => void;
-  defaultFn?: (err: T) => void;
+interface statusCodeProcessingTypes {
+  fn?: (err: AxiosResponse) => void;
+  defaultFn?: (err: AxiosResponse) => void;
 }
 
-export type statusCodeProcessingCore<T> = Map<
-  number,
-  statusCodeProcessingTypes<T>
->;
+export type statusCodeProcessingCore = Map<number, statusCodeProcessingTypes>;

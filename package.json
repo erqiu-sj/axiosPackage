@@ -1,5 +1,5 @@
 {
-  "name": "axiospackage",
+  "name": "@zealforchange/axiospackage",
   "version": "1.0.0",
   "description": "axios",
   "main": "./dist/index.js",
