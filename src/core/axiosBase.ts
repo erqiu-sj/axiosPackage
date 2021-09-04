@@ -51,7 +51,7 @@ export class AxiosBase {
     this.axiosInstance.interceptors.response.use((res: AxiosResponse<any>) => {
       res && axiosCanceler.removePending(res.config)
       if (tranform?.responseInterceptors && typeof tranform?.responseInterceptors === 'function') {
-        res = tranform?.responseInterceptors(res)
+        res = tranform?.responseInterceptors(res) as unknown as AxiosResponse<any>
       }
 
       const getCurrentCb = errorStatusCodeProcessing?.get(res.data?.code || res.data?.status || res.status)
