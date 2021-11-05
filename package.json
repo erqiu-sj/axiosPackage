@@ -1,6 +1,6 @@
 {
   "name": "@zealforchange/axiospackage",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "axios",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
